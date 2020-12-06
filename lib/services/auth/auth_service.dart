@@ -1,3 +1,4 @@
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -29,7 +30,11 @@ class AuthService {
 
   Future<void> logout() async {
     if ((await _auth.currentUser()).isAnonymous) {
-      
+      final HttpsCallable callable = CloudFunctions.instance.getHttpsCallable(
+        functionName: 'deleteUser',
+      );
+      HttpsCallableResult resp = await callable.call();
+      print(resp.data);
     }
 
     _auth.signOut();
